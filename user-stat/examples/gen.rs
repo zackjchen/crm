@@ -11,7 +11,7 @@ use fake::{
 };
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use sqlx::PgPool;
+use sqlx::{postgres::PgHasArrayType, PgPool};
 
 // generate 10000 users and run them in a tx, repeat 500 times
 
@@ -74,6 +74,13 @@ enum Gender {
     Female,
     Male,
     Unknown,
+}
+
+impl PgHasArrayType for Gender {
+    fn array_type_info() -> sqlx::postgres::PgTypeInfo {
+        // PgTypeInfo::with_name("gender")
+        <&str as PgHasArrayType>::array_type_info()
+    }
 }
 
 struct IntList(pub i32, pub i32, pub i32);
@@ -169,7 +176,7 @@ async fn efficient_bulk_insert(users: HashSet<UserStat>, pool: PgPool) -> Result
     let viewed_but_not_starteds = to_string_list(viewed_but_not_starteds);
     let started_but_not_finisheds = to_string_list(started_but_not_finisheds);
     let finisheds = to_string_list(finisheds);
-    let _affect_rows = sqlx::query(
+    let affect_rows = sqlx::query(
         r#"
         INSERT INTO user_stats(email,name,gender,created_at,last_visited_at,last_watched_at,recent_watched
         ,viewed_but_not_started,started_but_not_finished,finished,last_email_notification,last_in_app_notification,last_sms_notification
@@ -191,18 +198,20 @@ async fn efficient_bulk_insert(users: HashSet<UserStat>, pool: PgPool) -> Result
         .bind(last_sms_notifications)
         .execute(&mut *tx).await?.rows_affected()
         ;
+    tx.commit().await?;
+    println!("{} rows affected", affect_rows);
     Ok(())
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    for i in 1..=300 {
+    for i in 1..=2 {
         let users: HashSet<_> = (0..10000).map(|_| Faker.fake::<UserStat>()).collect();
         let pool = PgPool::connect("postgres://zackjchen:postgres@localhost:5432/stats").await?;
         println!("Insert Batch {}", i);
         efficient_bulk_insert(users, pool).await?;
         // bulk_insert(users, pool).await?;
-        println!("the {} users inserted", i * 10000);
+        // println!("the {} users inserted", i * 10000);
     }
     let dummy: UserStat = Faker.fake();
     println!("{:?}", dummy);

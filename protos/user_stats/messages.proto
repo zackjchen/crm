@@ -1,0 +1,30 @@
+syntax = "proto3";
+package user_stats;
+
+import "google/protobuf/timestamp.proto";
+message User{
+    string email = 1;
+    string name = 2;
+
+}
+
+message QueryRequest {
+    map<string, TimeQuery> timestamps = 1;
+    map<string, IdQuery> ids = 2;
+}
+
+message TimeQuery {
+    google.protobuf.Timestamp before = 2;
+    google.protobuf.Timestamp after = 3;
+}
+message IdQuery {
+    repeated uint32 ids = 1;
+}
+
+message RawQueryRequest {
+    string query = 1;
+}
+
+message QueryResponse {
+    repeated User users = 1;
+}

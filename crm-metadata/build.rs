@@ -7,6 +7,7 @@ fn main() -> anyhow::Result<()> {
     builder
         .out_dir("src/pb")
         .with_type_attributes(&["MaterializeRequest"], &[r#"#[derive(Eq, Hash)]"#])
+        // .with_serde(&["Content", "ContentType", "Publisher"], true, true, Some(&[r#"#[serde(rename_all = "camelCase")]"#]))
         .compile_protos(
             &[
                 "../protos/metadata/messages.proto",

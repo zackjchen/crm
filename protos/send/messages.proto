@@ -1,0 +1,41 @@
+syntax = "proto3";
+package send;
+import "google/protobuf/timestamp.proto";
+
+/// The message types used to send messages to users
+message EmailMessage {
+    string subject = 1;
+    string from = 2;
+    repeated string to = 3;
+    string body = 4;
+}
+
+/// The message types used to send messages to users
+message SmsMessage {
+    string sender = 1;
+    repeated string recipients = 2;
+    string body = 3;
+}
+
+/// The message types used to send messages to users
+message InAppMessage {
+    string title = 1;
+    string body = 2;
+    string device_id = 3;
+}
+
+/// The message types used to send messages to users
+message SendRequest {
+    string message_id = 1;
+    /// The message type in the request
+    oneof msg{
+        EmailMessage email = 2;
+        SmsMessage sms = 3;
+        InAppMessage in_app = 4;
+    };
+}
+
+message SendResponse {
+    string message_id = 1;
+    google.protobuf.Timestamp timestamp = 2;
+}

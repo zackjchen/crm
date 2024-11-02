@@ -379,6 +379,7 @@ dependencies = [
  "tonic-build",
  "tracing",
  "tracing-subscriber",
+ "uuid 0.8.2",
 ]
 
 [[package]]
@@ -1901,7 +1902,7 @@ dependencies = [
  "itertools 0.12.1",
  "sqlx",
  "tokio",
- "uuid",
+ "uuid 1.11.0",
 ]
 
 [[package]]
@@ -2483,6 +2484,15 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "user-stat",
+]
+
+[[package]]
+name = "uuid"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
+dependencies = [
+ "getrandom",
 ]
 
 [[package]]

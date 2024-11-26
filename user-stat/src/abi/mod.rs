@@ -33,7 +33,7 @@ impl UserStatsService {
             .fetch_all(&self.pool)
             .await
         else {
-            let err_msg = format!("Failed to fetch data, Query {}", &req.query);
+            let err_msg = format!("Failed to fetch data, Query: {}", &req.query);
             return ServiceResult::Err(Status::internal(err_msg));
         };
 

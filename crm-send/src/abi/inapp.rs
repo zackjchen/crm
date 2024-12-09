@@ -23,6 +23,7 @@ impl Sender for InAppMessage {
     }
 }
 
+#[cfg(feature = "test_utils")]
 impl InAppMessage {
     pub fn fake() -> Self {
         Self {

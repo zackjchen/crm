@@ -1,10 +1,17 @@
-use crm::pb::crm::{user_service_client::UserServiceClient, GetUserRequest};
+use crm::pb::{crm_client::CrmClient, WelcomeRequest};
+use tonic::Request;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let mut client = UserServiceClient::connect("http://[::1]:50051").await?;
-    let request = tonic::Request::new(GetUserRequest { id: 101 });
-    let response = client.get_user(request).await?;
-    println!("Response:{:?}", response);
+    let client = CrmClient::connect("http://localhost:50000".to_string())
+        .await
+        .unwrap();
+    let request = Request::new(WelcomeRequest {
+        id: "1".to_string(),
+        interval: 100,
+        content_ids: vec![2, 3],
+    });
+    let res = client.clone().welcome(request).await?.into_inner();
+    println!("{:?}", res);
     Ok(())
 }

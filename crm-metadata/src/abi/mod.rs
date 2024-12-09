@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use chrono::{DateTime, Days, Utc};
 use fake::faker::chrono::zh_cn::DateTimeBetween;
 use fake::faker::lorem::zh_cn::Sentence;
@@ -69,6 +71,12 @@ fn before(n: u64) -> DateTime<Utc> {
     now.checked_sub_days(Days::new(n)).unwrap()
 }
 
+impl MaterializeRequest {
+    pub fn new_with_ids(ids: &[u32]) -> impl Stream<Item = MaterializeRequest> {
+        let reqs: HashSet<_> = ids.iter().map(move |id| Self { id: *id }).collect();
+        tokio_stream::iter(reqs)
+    }
+}
 #[cfg(test)]
 mod tests {
 

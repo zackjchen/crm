@@ -1,42 +1,22 @@
-use crm::pb::crm::{
-    user_service_server::UserServiceServer, CreateUserRequest, GetUserRequest, User,
-};
-// use prost::Message;
-use crm::pb::crm::user_service_server::UserService;
-use tonic::{Request, Response, Status};
-
-#[derive(Debug, Default)]
-struct UserServer;
-
-#[tonic::async_trait]
-impl UserService for UserServer {
-    async fn get_user(&self, request: Request<GetUserRequest>) -> Result<Response<User>, Status> {
-        let inner = request.into_inner();
-        println!("get user request:{:?}", inner);
-        Ok(Response::new(User::default()))
-    }
-    async fn create_user(
-        &self,
-        request: Request<CreateUserRequest>,
-    ) -> Result<Response<User>, Status> {
-        let inner = request.into_inner();
-        println!("create user request:{:?}", inner);
-        Ok(Response::new(User::default()))
-    }
-}
+use crm::{config::AppConfig, CrmService};
+use tonic::transport::Server;
+use tracing::{info, level_filters::LevelFilter};
+use tracing_subscriber::{fmt::Layer, layer::SubscriberExt, util::SubscriberInitExt, Layer as _};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // let user =User::new(1, "Alice", "zack.j.chen@hkjc.org.hk");
-    // let encode = user.encode_to_vec();
-    // println!("encode:{:?}", encode);
-    let addr = "[::1]:50051".parse().unwrap();
-    let user_server: UserServer = Default::default();
-    println!("User Server running on {}", addr);
-    tonic::transport::Server::builder()
-        .add_service(UserServiceServer::new(user_server))
+    let layer = Layer::default().with_filter(LevelFilter::INFO);
+    tracing_subscriber::registry().with(layer).init();
+
+    let config = AppConfig::load().unwrap();
+    let addr = format!("[::1]:{}", config.server.port).parse().unwrap();
+    info!("Starting server on {}", addr);
+    let svc = CrmService::new(config).await?.into_server();
+    Server::builder()
+        .add_service(svc)
         .serve(addr)
-        .await?;
+        .await
+        .unwrap();
 
     Ok(())
 }

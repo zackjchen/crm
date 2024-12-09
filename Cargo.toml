@@ -6,6 +6,7 @@ resolver = "2"
 
 [workspace.dependencies]
 anyhow = "1.0.89"
+derive_builder = "0.10.0"
 prost = { version = "0.13.3"}
 prost-build = { version = "0.13.3"}
 prost-types = { version = "0.13.3"}
@@ -19,5 +20,7 @@ tokio-stream = { version="0.1.0" }
 serde_yaml = "0.9.33"
 itertools = "0.13.0"
 user-stat = { path = "user-stat" }
+crm-send = { path = "crm-send" }
+crm-metadata = { path = "crm-metadata" }
 tracing = { version = "0.1.26" }
 tracing-subscriber = { version = "0.3.18" }

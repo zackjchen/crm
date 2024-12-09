@@ -18,13 +18,13 @@ async fn main() -> anyhow::Result<()> {
     let stream = tokio_stream::iter(requests);
     let mut client = MetadataClient::connect(format!("http://{}", addr)).await?;
     let res = client.materialize(stream).await?;
-    let contents = res
+
+    // let contents = res.into_inner().collect::<Vec<_>>().await;
+    let contents: Vec<_> = res
         .into_inner()
-        .collect::<Vec<_>>()
-        .await
-        .iter()
-        .map(|r| r.clone().unwrap())
-        .collect::<Vec<_>>();
+        .then(|res| async { res.unwrap() })
+        .collect()
+        .await;
 
     println!("{:?}", contents);
     Ok(())

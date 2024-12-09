@@ -25,6 +25,7 @@ impl Sender for SmsMessage {
     }
 }
 
+#[cfg(feature = "test_utils")]
 impl SmsMessage {
     pub fn fake() -> Self {
         Self {

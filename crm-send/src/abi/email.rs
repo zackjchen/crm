@@ -21,7 +21,7 @@ impl Sender for EmailMessage {
         Ok(response)
     }
 }
-
+#[cfg(feature = "test_utils")]
 impl EmailMessage {
     pub fn fake() -> Self {
         Self {

@@ -73,3 +73,9 @@ async fn start_server(port: u32) -> Result<(TestPg, SocketAddr)> {
     sleep(Duration::from_micros(1)).await;
     Ok((tdb, addr))
 }
+
+#[test]
+fn test_1() {
+    let env1 = env!("CARGO_MANIFEST_DIR");
+    println!("env:{:?}", env1);
+}

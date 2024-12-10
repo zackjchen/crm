@@ -26,3 +26,12 @@ proto导入本地文件解决vs code报错的问题
     }
 }
 ```
+
+
+## 启动
+启动user-stats
+启动send
+启动metadata
+
+启动crm的server
+启动crm的client

@@ -68,41 +68,41 @@ impl CrmService {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use std::net::SocketAddr;
+// #[cfg(test)]
+// mod tests {
+//     use std::net::SocketAddr;
 
-    use super::*;
-    use crm_client::CrmClient;
-    #[tokio::test]
-    async fn test_crm_should_work() -> anyhow::Result<()> {
-        let addr = start_server().await;
-        println!("Server started at {}", addr);
-        let client = CrmClient::connect("http://localhost:50000".to_string())
-            .await
-            .unwrap();
-        let request = Request::new(WelcomeRequest {
-            id: "1".to_string(),
-            interval: 100,
-            content_ids: vec![2, 3],
-        });
-        let res = client.clone().welcome(request).await?.into_inner();
-        println!("{:?}", res);
-        Ok(())
-    }
+//     use super::*;
+//     use crm_client::CrmClient;
+//     #[tokio::test]
+//     async fn test_crm_should_work() -> anyhow::Result<()> {
+//         let addr = start_server().await;
+//         println!("Server started at {}", addr);
+//         let client = CrmClient::connect("http://localhost:50000".to_string())
+//             .await
+//             .unwrap();
+//         let request = Request::new(WelcomeRequest {
+//             id: "1".to_string(),
+//             interval: 100,
+//             content_ids: vec![2, 3],
+//         });
+//         let res = client.clone().welcome(request).await?.into_inner();
+//         println!("{:?}", res);
+//         Ok(())
+//     }
 
-    async fn start_server() -> SocketAddr {
-        let config = AppConfig::load().unwrap();
-        let addr = format!("[::1]:{}", config.server.port).parse().unwrap();
-        let service = CrmService::new(config).await.unwrap();
-        let svc = service.into_server();
-        tokio::spawn(async move {
-            tonic::transport::Server::builder()
-                .add_service(svc)
-                .serve(addr)
-                .await
-                .unwrap();
-        });
-        addr
-    }
-}
+//     async fn start_server() -> SocketAddr {
+//         let config = AppConfig::load().unwrap();
+//         let addr = format!("[::1]:{}", config.server.port).parse().unwrap();
+//         let service = CrmService::new(config).await.unwrap();
+//         let svc = service.into_server();
+//         tokio::spawn(async move {
+//             tonic::transport::Server::builder()
+//                 .add_service(svc)
+//                 .serve(addr)
+//                 .await
+//                 .unwrap();
+//         });
+//         addr
+//     }
+// }

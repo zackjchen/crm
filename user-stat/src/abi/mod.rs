@@ -1,6 +1,7 @@
 use chrono::{TimeZone, Utc};
 use itertools::Itertools;
 use tonic::{Response, Status};
+use tracing::info;
 
 use crate::{
     pb::user_stats::{QueryRequest, RawQueryRequest, TimeQuery, User},
@@ -22,13 +23,13 @@ impl UserStatsService {
         let conditions = Itertools::merge(time_conditions, ids_conditions).join(" AND ");
 
         let sql = format!("select email, name from user_stats where {}", conditions);
-        println!("UserStatsService SQL: {}", &sql);
+        info!("UserStatsService SQL: {}", &sql);
 
         self.raw_query(RawQueryRequest { query: sql }).await
     }
 
     pub async fn raw_query(&self, req: RawQueryRequest) -> ServiceResult<ResponseStream> {
-        println!("sql: {}", &req.query);
+        info!("sql: {}", &req.query);
         let Ok(ret) = sqlx::query_as::<_, User>(&req.query)
             .fetch_all(&self.pool)
             .await

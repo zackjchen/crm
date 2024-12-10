@@ -25,12 +25,12 @@ impl CrmService {
     ) -> Result<Response<WelcomeResponse>, Status> {
         let id = request.id.clone();
         let date = Utc::now() - Duration::days(request.interval as _);
-        let before = Timestamp {
+        let after = Timestamp {
             seconds: date.timestamp(),
             nanos: date.timestamp_subsec_nanos() as i32,
         };
 
-        let after = Timestamp {
+        let before = Timestamp {
             seconds: Utc::now().timestamp(),
             nanos: Utc::now().timestamp_subsec_nanos() as i32,
         };
